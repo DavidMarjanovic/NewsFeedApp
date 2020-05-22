@@ -41,7 +41,7 @@ class ImageCell: UITableViewCell {
     func setupConstraints() {
         newsImage.snp.makeConstraints { (maker) in
             maker.top.bottom.leading.trailing.equalToSuperview()
-            maker.width.height.equalTo(255)
+            maker.height.equalTo(200)
         }
     }
     

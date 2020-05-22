@@ -63,10 +63,9 @@ class NewsFeedCell: UITableViewCell {
         
         newsImage.snp.makeConstraints{(maker) in
             maker.top.equalToSuperview()
-            maker.leading.equalToSuperview().offset(15)
-            maker.trailing.equalToSuperview().offset(-15)
             maker.width.equalTo(200)
             maker.height.equalTo(100)
+            maker.centerX.equalToSuperview()
         }
         
         newsTitle.snp.makeConstraints{(maker) in
