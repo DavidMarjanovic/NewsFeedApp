@@ -13,7 +13,6 @@ public class SerializationManager{
     static let jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .deferredToData
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
         return decoder
     }()
     

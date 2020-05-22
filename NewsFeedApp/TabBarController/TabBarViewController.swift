@@ -5,36 +5,27 @@
 //  Created by David Marjanović on 14/05/2020.
 //  Copyright © 2020 David Marjanović. All rights reserved.
 //
-
+import Foundation
 import UIKit
 
 class TabBarViewController: UITabBarController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        
         let firstViewController = NewsFeedViewController()
-                
-        firstViewController.tabBarItem = UITabBarItem(title: "News Feed", image: .actions, tag: 0)
-
+        let firstNavigationController = UINavigationController()
+        firstNavigationController.tabBarItem = UITabBarItem(title: "News Feed", image: .actions, tag: 0)
+        
         let secondViewController = FavoriteNewsViewController()
-
-        secondViewController.tabBarItem = UITabBarItem(title: "Favorite News", image: .checkmark, tag: 1)
-
-        let tabBarList = [firstViewController, secondViewController]
-
+        let secondNavigationController = UINavigationController()
+        secondNavigationController.tabBarItem = UITabBarItem(title: "Favorite News", image: .checkmark, tag: 1)
+        
+        let tabBarList = [firstNavigationController, secondNavigationController]
+        firstNavigationController.pushViewController(firstViewController, animated: true)
+        secondNavigationController.pushViewController(secondViewController, animated: true)
         viewControllers = tabBarList
-        // Do any additional setup after loading the view.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

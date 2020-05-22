@@ -10,14 +10,18 @@ import Foundation
 import UIKit
 import XLPagerTabStrip
 import SnapKit
+import RxSwift
 
 class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDataSource, IndicatorInfoProvider{
-    
+
+    var loader: UIAlertController?
+    private let disposeBag = DisposeBag()
     var childNumber: String = ""
     var newsSource: String = ""
     let indicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.large)
     let networkManager = NetworkManager()
     var screenData: [NewsListView] = []
+    let viewModel = NewsFeedViewModel()
     
     func indicatorInfo(for pagerTabStripController: PagerTabStripViewController) -> IndicatorInfo {
         return IndicatorInfo(title: "\(childNumber)")
@@ -25,7 +29,8 @@ class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDa
     
     let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.estimatedRowHeight = 155
+        tableView.estimatedRowHeight = 300
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -41,11 +46,11 @@ class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDa
         
         setupUI()
         getData()
-        
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     func getData() {
-            indicator.startAnimating()
+        indicator.startAnimating()
         networkManager.getData(from: "https://newsapi.org/v2/top-headlines?sources=\(newsSource)&apiKey=") {[unowned self] (data, newsError) in
             guard let safeData = data else {
                 self.alert.title = "Error while getting news"
@@ -53,24 +58,13 @@ class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDa
                 self.present(self.alert, animated: true, completion: nil)
                 return
             }
-            self.screenData = self.createScreenData(data: safeData)
-                DispatchQueue.main.async {
-                    self.indicator.stopAnimating()
-                    self.tableView.reloadData()
-                }
+            self.screenData = self.viewModel.createScreenData(data: safeData)
+            DispatchQueue.main.async {
+                self.indicator.stopAnimating()
+                self.tableView.reloadData()
+            }
         }
     }
-    
-    func createScreenData(data: [NewsList]) -> [NewsListView]{
-        var screenData: [NewsListView] = []
-        for news in data{
-            let newsListView = NewsListView(author: news.author ?? "", title: news.title ?? "", description: news.description ?? "", url: news.url ?? "", urlToImage: news.urlToImage ?? "", publishedAt: news.publishedAt ?? "", content: news.content ?? "")
-            
-            screenData.append(newsListView)
-        }
-        return screenData
-    }
-
     
     init(source: String) {
         self.newsSource = source
@@ -92,17 +86,16 @@ class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDa
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
-        tableView.backgroundColor = UIColor(red: 0.221, green: 0.221, blue: 0.221, alpha: 1)
     }
     
     func setupConstraints(){
         tableView.snp.makeConstraints{(maker) in
-            maker.leading.trailing.top.bottom.equalToSuperview()
+            maker.leading.trailing.top.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        screenData.count
+        return screenData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -113,7 +106,12 @@ class ChildViewControllers: UIViewController, UITableViewDelegate, UITableViewDa
         cell.configureCell(news: news)
         return cell
     }
-  
-
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let viewController = DetailedNewsViewController(news: screenData[indexPath.row])
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
 }
 

@@ -16,8 +16,9 @@ struct NewsListView {
     let urlToImage: String
     let publishedAt: String
     let content: String
+    let source: Source
     
-    init (author: String, title: String, description: String, url: String, urlToImage: String, publishedAt: String, content: String) {
+    init (author: String, title: String, description: String, url: String, urlToImage: String, publishedAt: String, content: String, source: Source) {
         self.author = author
         self.title = title
         self.description = description
@@ -25,5 +26,6 @@ struct NewsListView {
         self.urlToImage = urlToImage
         self.publishedAt = publishedAt
         self.content = content
+        self.source = source
     }
 }

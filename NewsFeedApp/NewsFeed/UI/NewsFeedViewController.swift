@@ -8,32 +8,26 @@
 import Foundation
 import UIKit
 import XLPagerTabStrip
+import SnapKit
 
 class NewsFeedViewController: UIViewController{
-
+    
     let pagerTabStrip = PagerViewController()
-
-
-
-
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
-
+        
         view.addSubview(pagerTabStrip.view)
+        self.addChild(pagerTabStrip)
+        pagerTabStrip.didMove(toParent: self)
         setupConstraints()
     }
-
-
+    
     func setupConstraints() {
-
-
-
-
+        pagerTabStrip.view.snp.makeConstraints { (maker) in
+            maker.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
-
-
-
+    
 }
 
